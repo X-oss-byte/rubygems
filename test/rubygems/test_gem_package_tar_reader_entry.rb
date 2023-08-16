@@ -181,8 +181,13 @@ class TestGemPackageTarReaderEntry < Gem::Package::TarTestCase
     assert_equal @contents[100..-1], @entry.read
   end
 
-  def test_read_partial
+  def test_readpartial
     assert_equal @contents[0...100], @entry.readpartial(100)
+  end
+
+  def test_readpartial_to_eof
+    assert_equal @contents, @entry.readpartial(4096)
+    assert @entry.eof?
   end
 
   def test_read_partial_buffer
@@ -193,6 +198,7 @@ class TestGemPackageTarReaderEntry < Gem::Package::TarTestCase
 
   def test_readpartial_past_eof
     @entry.readpartial(@contents.size)
+    assert @entry.eof?
     e = assert_raise(EOFError) do
       @entry.readpartial(1)
     end

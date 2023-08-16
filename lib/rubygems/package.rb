@@ -706,7 +706,7 @@ EOM
 
   def verify_gz(entry) # :nodoc:
     Zlib::GzipReader.wrap entry do |gzio|
-      gzio.readpartial 16_384 until gzio.eof? # gzip checksum verification
+      gzio.read 16_384 until gzio.eof? # gzip checksum verification
     end
   rescue Zlib::GzipFile::Error => e
     raise Gem::Package::FormatError.new(e.message, entry.full_name)
