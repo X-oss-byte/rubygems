@@ -209,6 +209,8 @@ class Gem::Package::TarReader::Entry
 
     pending = new_pos - @io.pos
 
+    return 0 if pending == 0
+
     if @io.respond_to?(:seek)
       begin
         # avoid reading if the @io supports seeking
@@ -226,8 +228,8 @@ class Gem::Package::TarReader::Entry
     end
 
     while pending > 0 do
-      ret = @io.readpartial([pending, 4096].min)
-      size_read = ret.size
+      size_read = @io.read([pending, 4096].min)&.size
+      raise(EOFError, "end of file reached") if size_read.nil?
       pending -= size_read
     end
 
